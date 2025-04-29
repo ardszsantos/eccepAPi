@@ -1,15 +1,32 @@
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById('btn-buscar-cep').addEventListener('click', function() {
-        //ajax  - Asynchronous Javascript and XML
-        const cep = document.getElementById('cep').value;
-
-        const endpoint =
-        'https://api.allorigins.win/raw?url=' +
-        encodeURIComponent(`https://viacep.com.br/ws/${cep}/json`);  
-
+document.addEventListener('DOMContentLoaded', () => {
+    const cepInput = document.getElementById('cep');
+    const enderecoInput = document.getElementById('endereco');
+    const btnBuscar = document.getElementById('btn-buscar-cep');
+    const spinner = btnBuscar.querySelector('.spinner-border');
     
-        fetch(endpoint).then(function(resposta){
-            return resposta.json();
-        })    
-    })
-})     // …
+    btnBuscar.addEventListener('click', () => {
+        const cep = cepInput.value.trim();
+        if (!cep) return;
+
+        // mostra spinner
+        spinner.classList.remove('d-none');
+
+        const endpoint = 'https://api.allorigins.win/raw?url=' + 
+            encodeURIComponent(`https://viacep.com.br/ws/${cep}/json`);
+
+        fetch(endpoint)
+            .then(res => res.json())                     // chamar .json()
+            .then(data => {
+                const { logradouro, bairro, localidade, uf } = data;
+                enderecoInput.value = `${logradouro}, ${bairro} - ${localidade} - ${uf}`;
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Erro ao buscar CEP');
+            })
+            .finally(() => {
+                // esconde spinner
+                spinner.classList.add('d-none');
+            });
+    });
+});
