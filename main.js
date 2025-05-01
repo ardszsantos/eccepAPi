@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             encodeURIComponent(`https://viacep.com.br/ws/${cep}/json`);
         
         fetch(endpoint)
-            .then(res => res.json())                     // chamar .json()
+            .then(res => res.json())
             .then(data => {
                 const { logradouro, bairro, localidade, uf } = data;
                 enderecoInput.value = `${logradouro}, ${bairro} - ${localidade} - ${uf}`;
@@ -35,3 +35,25 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 });
+
+
+const formularioPedido = document.getElementById('formulario-pedido')
+const nome = document.getElementById('nome')
+const sobrenome = document.getElementById('sobrenome')
+const email = document.getElementById('email')
+
+formularioPedido.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    if(nome.value.length == 0) {
+        throw new Error("Digite o nome");
+    }
+
+    if(sobrenome.value.length == 0) {
+        throw new Error("Digite o sobrenome");
+    }
+
+    if(email.value.length == 0) {
+        throw new Error("Digite o email");
+    }
+})
