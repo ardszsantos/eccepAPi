@@ -1,59 +1,32 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const cepInput = document.getElementById('cep');
-    const enderecoInput = document.getElementById('endereco');
-    const btnBuscar = document.getElementById('btn-buscar-cep');
-    const spinner = btnBuscar.querySelector('.spinner-border');
-    const i = btnBuscar.querySelector('.bi-search');
-    
+const username = 'ardszsantos';
+const url = `https://api.github.com/users/${username}`;
 
-    btnBuscar.addEventListener('click', () => {
-        const cep = cepInput.value.trim();
-        if (!cep) return;
-        
-        spinner.classList.remove('d-none');
-        i.classList.add('d-none');
-        
+fetch(url)
+    .then(res => {
+        if (!res.ok) throw new Error('Erro ao buscar dados do GitHub');
+        return res.json();
+    })
+    .then(user => {
+        // seleciona os elementos
+        const avatarEl    = document.querySelector('.profile-avatar');
+        const nameEl      = document.querySelector('.profile-name');
+        const loginEl     = document.querySelector('.profile-username');
+        const reposEl     = document.getElementById('repos');
+        const followersEl = document.getElementById('seguidores');
+        const followingEl = document.getElementById('seguindo');
+        const linkEl      = document.querySelector('.profile-link');
 
-        const endpoint = 'https://api.allorigins.win/raw?url=' + 
-            encodeURIComponent(`https://viacep.com.br/ws/${cep}/json`);
-        
-        fetch(endpoint)
-            .then(res => res.json())
-            .then(data => {
-                const { logradouro, bairro, localidade, uf } = data;
-                enderecoInput.value = `${logradouro}, ${bairro} - ${localidade} - ${uf}`;
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Erro ao buscar CEP');
-            })
-            .finally(() => {
-                setTimeout(function() {
-                    spinner.classList.add('d-none');
-                    i.classList.remove('d-none');
-                }, 500)
-            });
+        // preenche
+        avatarEl.src       = user.avatar_url;
+        avatarEl.alt       = `${user.login} avatar`;
+        nameEl.textContent = user.name || user.login;
+        loginEl.textContent= `@${user.login}`;
+        reposEl.textContent     = user.public_repos;
+        followersEl.textContent = user.followers;
+        followingEl.textContent = user.following;
+        linkEl.href             = user.html_url;
+    })
+    .catch(err => {
+    console.error(err);
+
     });
-});
-
-
-const formularioPedido = document.getElementById('formulario-pedido')
-const nome = document.getElementById('nome')
-const sobrenome = document.getElementById('sobrenome')
-const email = document.getElementById('email')
-
-formularioPedido.addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    if(nome.value.length == 0) {
-        throw new Error("Digite o nome");
-    }
-
-    if(sobrenome.value.length == 0) {
-        throw new Error("Digite o sobrenome");
-    }
-
-    if(email.value.length == 0) {
-        throw new Error("Digite o email");
-    }
-})
